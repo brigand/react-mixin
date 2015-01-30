@@ -1,3 +1,5 @@
+![travis](https://travis-ci.org/brigand/react-mixin.svg)
+
 Want to use ES6/CoffeeScript/TypeScript/{InsertNoun}Script classes, and mixins?
 
 React doesn't have anything built in for this, but don't worry!  This package implements
