@@ -1,6 +1,6 @@
 {
   "name": "react-mixin",
-  "version": "1.0.0-pre",
+  "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "dependencies": {
