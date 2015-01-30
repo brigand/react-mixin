@@ -16,8 +16,7 @@ reactMixin(Foo.prototype, someOtherMixin);
 ```
 
 That's pretty much it.  You get errors instead of silently overwriting things, like in react,
-with the exception of things whitelisted in index.js as type MANY, MANY_MERGED (getDefaultProps, if you still need it),
-and just an object merge with conflict error (propTypes).
+with the exception of things whitelisted in index.js as type MANY, MANY_MERGED (getDefaultProps, if you still need it).
 
 Like this but want to use it outside of react?  See [smart-mixin][1] and define your own mixin spec.
 
