@@ -5,6 +5,17 @@ Want to use ES6/CoffeeScript/TypeScript/{InsertNoun}Script classes, and mixins?
 React doesn't have anything built in for this, but don't worry!  This package implements
 react's mixin strategy for arbitrary objects.
 
+Install with one of:
+
+```sh
+# recommended
+npm install --save react-mixin@1
+
+# will expose window.smartMixin or the smartMixin AMD module
+curl 'wzrd.in/standalone/react-mixin@1' > vendor/smart-mixin.js
+```
+
+
 Here's an example:
 
 ```js
