@@ -47,7 +47,8 @@ class Foo extends React.Component {
 }
 ```
 
-Also propTypes and defaultProps are now static properties.  You never actually pass the class to react-mixin, so you'll have to handle that on your own.
+Also propTypes and defaultProps are now static properties.  You never actually pass the class to react-mixin, so you'll have to handle that on your own.  It will merge the getInitialState and getDefaultProps functions, of course, but you're
+responsible for calling them.
 
 ```js
 Object.assign(MyClass.propTypes, MixinA.propTypes, MixinB.propTypes);
@@ -56,12 +57,18 @@ class Foo extends React.Component {
     constructor(props){
         super(Object.assign(
             {}, 
-            mixinA.getDefaultProps && mixinA.getDefaultProps(),
-            mixinB.getDefaultProps && mixinB.getDefaultProps(),
+            this.getDefaultProps(),
             props
         );
         this.state = this.getInitialState();
     }
+
+    // you need to define these, or guard the above calls
+    // if the function doesn't exist on the mixins or component class you'll
+    // be calling undefined in the constructor (TypeError)
+    // assuming a mixin does or doesn't implement them is a violation of the black box
+    getInitialState(){ return {} }
+    getDefaultProps(){ return {} }
 }
 ```
 
