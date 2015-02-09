@@ -75,6 +75,28 @@ class Foo extends React.Component {
 That's pretty much it.  You get errors instead of silently overwriting things, like in react,
 with the exception of things whitelisted in index.js as type MANY, MANY_MERGED (getDefaultProps/getInitialState).
 
+Autobinding is done by React.createClass, and there's no equivilent in ES6 classes.  This also has better performance (I think), but you do lose some convienenct.  You can explicitly bind things in the constructor or componentWillMount.  On the main class, the constructor replaces componentWillMount.
+
+```js
+class Foo extends React.Component {
+    constructor(props){
+        super(props);
+        this.handleChange = this.handleChange.bind(this);
+    }
+    ...
+}
+```
+
+```js
+var mixin = {
+    componentWillMount () {
+        this.handleChange = this.handleChange.bind(this);
+    },
+    ...
+};
+```
+    
+
 Like this but want to use it outside of react?  See [smart-mixin][1] and define your own mixin spec.
 
 ## Should I use this?
