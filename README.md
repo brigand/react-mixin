@@ -11,8 +11,8 @@ Install with one of:
 # recommended
 npm install --save react-mixin@1
 
-# will expose window.smartMixin or the smartMixin AMD module
-curl 'wzrd.in/standalone/react-mixin@1' > vendor/smart-mixin.js
+# will expose window.reactMixin or the reactMixin AMD module
+curl 'wzrd.in/standalone/react-mixin@1' > vendor/react-mixin.js
 ```
 
 
@@ -75,7 +75,7 @@ class Foo extends React.Component {
 That's pretty much it.  You get errors instead of silently overwriting things, like in react,
 with the exception of things whitelisted in index.js as type MANY, MANY_MERGED (getDefaultProps/getInitialState).
 
-Autobinding is done by React.createClass, and there's no equivilent in ES6 classes.  This also has better performance (I think), but you do lose some convienenct.  You can explicitly bind things in the constructor or componentWillMount.  On the main class, the constructor replaces componentWillMount.
+Autobinding is done by React.createClass, and there's no equivilent in ES6 classes.  This also has better performance (I think), but you do lose some convenience.  You can explicitly bind things in the constructor or componentWillMount.  On the main class, the constructor replaces componentWillMount.
 
 ```js
 class Foo extends React.Component {
