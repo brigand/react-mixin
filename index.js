@@ -28,8 +28,8 @@ module.exports = function(reactClass, reactMixin) {
   })(reactClass.prototype, prototypeMethods);
 
   mixin({
-    childContextTypes: mixin.MANY_MERGED,
-    contextTypes: mixin.MANY_MERGED,
-    propTypes: mixin.MANY_MERGED
+    childContextTypes: mixin.MANY_MERGED_LOOSE,
+    contextTypes: mixin.MANY_MERGED_LOOSE,
+    propTypes: mixin.MANY_MERGED_LOOSE
   })(reactClass, staticProps);
 };
