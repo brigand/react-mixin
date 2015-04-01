@@ -11,4 +11,7 @@ module.exports = mixin({
 
     getInitialState: mixin.MANY_MERGED,
     getDefaultProps: mixin.MANY_MERGED,
+    childContextTypes: mixin.MANY_MERGED_LOOSE,
+    contextTypes: mixin.MANY_MERGED_LOOSE,
+    getChildContext: mixin.MANY_MERGED
 });
