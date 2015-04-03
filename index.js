@@ -64,7 +64,8 @@ function mixinClass(reactClass, reactMixin) {
   mixin({
     childContextTypes: mixin.MANY_MERGED_LOOSE,
     contextTypes: mixin.MANY_MERGED_LOOSE,
-    propTypes: mixin.MANY_MERGED_LOOSE
+    propTypes: mixin.MANY_MERGED_LOOSE,
+    defaultProps: mixin.MANY_MERGED_LOOSE
   })(reactClass, staticProps);
 }
 
