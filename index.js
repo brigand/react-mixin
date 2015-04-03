@@ -9,13 +9,44 @@ var mixinProto = mixin({
   componentWillUpdate: mixin.MANY,
   componentDidUpdate: mixin.MANY,
   componentWillUnmount: mixin.MANY,
-
-  getInitialState: mixin.MANY_MERGED,
-  getDefaultProps: mixin.MANY_MERGED,
   getChildContext: mixin.MANY_MERGED
 });
 
+function setDefaultProps(reactMixin) {
+  var getDefaultProps = reactMixin.getDefaultProps;
+
+  if(getDefaultProps) {
+    reactMixin.defaultProps = getDefaultProps();
+
+    delete reactMixin.getDefaultProps;
+  }
+}
+
+function setInitialState(reactMixin) {
+  var getInitialState = reactMixin.getInitialState;
+  var componentWillMount = reactMixin.componentWillMount;
+
+  if(getInitialState) {
+    if(!componentWillMount) {
+      reactMixin.componentWillMount = function() {
+        this.setState(getInitialState.call(this));
+      }
+    }
+    else {
+      reactMixin.componentWillMount = function() {
+        componentWillMount.call(this);
+        this.setState(getInitialState.call(this));
+      }
+    }
+
+    delete reactMixin.getInitialState;
+  }
+}
+
 function mixinClass(reactClass, reactMixin) {
+  setDefaultProps(reactMixin);
+  setInitialState(reactMixin);
+
   var prototypeMethods = {};
   var staticProps = {};
 

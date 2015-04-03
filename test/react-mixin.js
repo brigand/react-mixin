@@ -39,7 +39,7 @@ describe('react-mixin', function(){
     });
 
     describe('mixins whole class', function () {
-        var reactClass, instance;
+        var reactClass;
 
         beforeEach(function () {
             function Component(){
@@ -48,6 +48,7 @@ describe('react-mixin', function(){
             Component.prototype.constructor = Component;
             Component.prototype.render = function(){ return 1; };
             Component.prototype.handleClick = function(){ return 2; };
+            Component.prototype.setState = sinon.spy();
             reactClass = Component;
         });
 
@@ -64,6 +65,62 @@ describe('react-mixin', function(){
 
             expect(reactClass.getChildContext).not.to.exist;
             expect(reactClass.prototype.contextTypes).not.to.exist;
+        });
+
+        it('calls getDefaultProps and sets result as static prop', function () {
+            var mixin = {
+                getDefaultProps: function() {
+                    return {
+                        test: 'test'
+                    }
+                }
+            };
+
+            reactMixin.onClass(reactClass, mixin);
+
+            expect(reactClass.defaultProps).to.eql({test: 'test'});
+            expect(reactClass.prototype.getDefaultProps).not.to.exist;
+        });
+
+        describe('replace getInitialState with componentWillMount', function () {
+            it('creates new componentWillMount if there is no such', function () {
+                var mixin = {
+                    getInitialState: function() {
+                        return {
+                            test: 'test'
+                        }
+                    }
+                };
+
+                reactMixin.onClass(reactClass, mixin);
+                expect(reactClass.prototype.componentWillMount).to.exist;
+
+                Object.create(reactClass.prototype).componentWillMount();
+
+                expect(reactClass.prototype.setState.calledOnce).to.be.true;
+                expect(reactClass.prototype.getInitialState).not.to.exist;
+            });
+
+            it('merges two componentWillMount', function () {
+                var mixin = {
+                    getInitialState: function() {
+                        return {
+                            test: 'test'
+                        }
+                    },
+                    componentWillMount: function() {
+                        this.setState({test1: 'test1'})
+                    }
+                };
+
+                reactMixin.onClass(reactClass, mixin);
+                expect(reactClass.prototype.componentWillMount).to.exist;
+
+                Object.create(reactClass.prototype).componentWillMount();
+
+                expect(reactClass.prototype.setState.calledTwice).to.be.true
+                expect(reactClass.prototype.getInitialState).not.to.exist;
+            });
         });
     });
 });
