@@ -72,9 +72,15 @@ function mixinClass(reactClass, reactMixin) {
 module.exports = (function () {
   reactMixin = mixinProto;
 
-  reactMixin.onClass = function(reactClass, reactMixin) {
-    mixinClass(reactClass, reactMixin)
+  reactMixin.onClass = function(reactClass, mixin) {
+    mixinClass(reactClass, mixin)
   };
+
+  reactMixin.decorate = function(mixin) {
+    return function(reactClass) {
+      return reactMixin.onClass(reactClass, mixin);
+    };
+  }
 
   return reactMixin;
 })();

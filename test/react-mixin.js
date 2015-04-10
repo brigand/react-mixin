@@ -82,6 +82,22 @@ describe('react-mixin', function(){
             expect(reactClass.prototype.getDefaultProps).not.to.exist;
         });
 
+        it('acts as decorator', function() {
+            var mixin = {
+                getDefaultProps: function() {
+                    return {
+                        test: 'test'
+                    }
+                }
+            };
+
+            var decorator = reactMixin.decorate(mixin);
+            var instance = decorator(reactClass);
+
+            expect(reactClass.defaultProps).to.eql({test: 'test'});
+            expect(reactClass.prototype.getDefaultProps).not.to.exist;
+        });
+
         describe('replace getInitialState with componentWillMount', function () {
             it('creates new componentWillMount if there is no such', function () {
                 var mixin = {
