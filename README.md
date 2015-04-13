@@ -28,49 +28,55 @@ reactMixin(Foo.prototype, someMixin);
 reactMixin(Foo.prototype, someOtherMixin);
 ```
 
+## Class level behavior
+
+Many of the things that were regular properties in createClass are now static properties of the class.  To have things like getDefaultProps, propTypes, and getInitialState working correctly you need to apply react-mixin a level higher than the prototype: the class itself.
+
+```js
+var mixin = {
+  getDefaultProps: function(){
+    return {b: 2};
+  }
+};
+
+class Foo {
+  static defaultProps = {
+    a: 1
+  };
+  render(){
+    console.log(this.props); // {a: 1, b: 2}
+  }
+}
+
+reactMixin.ofClass(Foo, mixin);
+```
+
+## But it's at the end of the file!
+
+For more readability, there is an es7 decorator proposal.  With the latest babel version and the stage config option set to 0 or 1, you can use decorators.
+
+```js
+@reactMixin.decorate(mixin)
+class Foo {
+  static defa...
+}
+```
+
+This is a very thin wrapper.
+
+```js
+  reactMixin.decorate = function(mixin) {
+    return function(reactClass) {
+      return reactMixin.onClass(reactClass, mixin);
+    };
+  }
+```
+
 ## Differences from createClass
 
-React won't call getInitialState or getDefaultProps.  See [the blog post](http://facebook.github.io/react/blog/2015/01/27/react-v0.13.0-beta-1.html).
+@ndout resolved the differences by adding `reactMixin.ofClass`.  If there are any more incompatibilites, **other than autobinding methods which is intentionally omitted**, please create an issue.
 
-You can do it your self in the constructor.
-
-```js
-class Foo extends React.Component {
-    constructor(props){
-        super(props);
-        this.state = this.getInitialState();
-    }
-
-    getInitialState(){
-        return {foo: 'bar'};
-    }
-}
-```
-
-Also propTypes and defaultProps are now static properties.  You never actually pass the class to react-mixin, so you'll have to handle that on your own.  It will merge the getInitialState and getDefaultProps functions, of course, but you're
-responsible for calling them.
-
-```js
-Object.assign(MyClass.propTypes, MixinA.propTypes, MixinB.propTypes);
-
-class Foo extends React.Component {
-    constructor(props){
-        super(Object.assign(
-            {}, 
-            this.getDefaultProps(),
-            props
-        );
-        this.state = this.getInitialState();
-    }
-
-    // you need to define these, or guard the above calls
-    // if the function doesn't exist on the mixins or component class you'll
-    // be calling undefined in the constructor (TypeError)
-    // assuming a mixin does or doesn't implement them is a violation of the black box
-    getInitialState(){ return {} }
-    getDefaultProps(){ return {} }
-}
-```
+---
 
 That's pretty much it.  You get errors instead of silently overwriting things, like in react,
 with the exception of things whitelisted in index.js as type MANY, MANY_MERGED (getDefaultProps/getInitialState).
@@ -87,15 +93,27 @@ class Foo extends React.Component {
 }
 ```
 
+## But... autobinding!
+
+If you need autobinding because a mixin depends on it, you can bind the needed methods in the constructor, or do something like this (haven't given it much thought, suggestions welcome).
+
 ```js
-var mixin = {
-    componentWillMount () {
-        this.handleChange = this.handleChange.bind(this);
-    },
-    ...
-};
+function autobind(methodNames){
+    return {
+        componentWillMount: function(){
+            methodNames.forEach((name) => {
+                this[name] = this[name].bind(this);
+            });
+        }
+    };
+}
+
+@reactMixin.decorate(mixin)
+@reactMixin.decorate(autobind(Object.keys(mixin)))
+class Foo {
+  ...
+}
 ```
-    
 
 Like this but want to use it outside of react?  See [smart-mixin][1] and define your own mixin spec.
 
@@ -103,6 +121,8 @@ Like this but want to use it outside of react?  See [smart-mixin][1] and define 
 
 I can't think of a more elegant solution to mixins in es6 classes.  If someone comes up with one, create an issue
 and I'll link to it here.
+
+In the future people will likely use [high order components](https://medium.com/@dan_abramov/mixins-are-dead-long-live-higher-order-components-94a0d2f9e750) instead of mixins, making this library obsolete. 
 
 Should you use es6 classes for react components?  Based on the hacks required above, I'd probably avoid it.
 It's important that react makes it an option, and it's important to be able to use mixins with them, which
