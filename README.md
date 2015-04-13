@@ -48,7 +48,7 @@ class Foo {
   }
 }
 
-reactMixin.ofClass(Foo, mixin);
+reactMixin.onClass(Foo, mixin);
 ```
 
 ## But it's at the end of the file!
@@ -74,7 +74,7 @@ This is a very thin wrapper.
 
 ## Differences from createClass
 
-@ndout resolved the differences by adding `reactMixin.ofClass`.  If there are any more incompatibilites, **other than autobinding methods which is intentionally omitted**, please create an issue.
+@ndout resolved the differences by adding `reactMixin.onClass`.  If there are any more incompatibilites, **other than autobinding methods which is intentionally omitted**, please create an issue.
 
 ---
 
