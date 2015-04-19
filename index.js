@@ -30,13 +30,13 @@ function setInitialState(reactMixin) {
     if(!componentWillMount) {
       reactMixin.componentWillMount = function() {
         this.setState(getInitialState.call(this));
-      }
+      };
     }
     else {
       reactMixin.componentWillMount = function() {
-        componentWillMount.call(this);
         this.setState(getInitialState.call(this));
-      }
+        componentWillMount.call(this);
+      };
     }
 
     delete reactMixin.getInitialState;
