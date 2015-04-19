@@ -2,6 +2,7 @@ var reactMixin = require('..');
 var expect = require('expect.js');
 var sinon = require('sinon');
 var React = require('react');
+var objectAssign = require('object-assign');
 
 describe('react-mixin', function(){
     describe('mixins prototype', function () {
@@ -48,7 +49,9 @@ describe('react-mixin', function(){
             Component.prototype.constructor = Component;
             Component.prototype.render = function(){ return 1; };
             Component.prototype.handleClick = function(){ return 2; };
-            Component.prototype.setState = sinon.spy();
+            Component.prototype.setState = sinon.spy(function(nextState) {
+                this.state = objectAssign(this.state || {}, nextState);
+            });
             reactClass = Component;
         });
 
@@ -98,7 +101,7 @@ describe('react-mixin', function(){
             expect(reactClass.prototype.getDefaultProps).not.to.exist;
         });
 
-        describe('replace getInitialState with componentWillMount', function () {
+        describe('wrap getInitialState into componentWillMount', function () {
             it('creates new componentWillMount if there is no such', function () {
                 var mixin = {
                     getInitialState: function() {
@@ -136,6 +139,26 @@ describe('react-mixin', function(){
 
                 expect(reactClass.prototype.setState.calledTwice).to.be.true
                 expect(reactClass.prototype.getInitialState).not.to.exist;
+            });
+
+            it('calls getInitialState before original componentWillMount which have access to state', function() {
+                var mixin = {
+                    getInitialState: function() {
+                        return {
+                            counter: 22
+                        }
+                    },
+                    componentWillMount: function() {
+                        this.state.counter = this.state.counter + 1;
+                    }
+                };
+
+                reactMixin.onClass(reactClass, mixin);
+
+                var obj = Object.create(reactClass.prototype);
+                obj.componentWillMount();
+
+                expect(obj.state.counter).to.be.eql(23);
             });
         });
     });
