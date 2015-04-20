@@ -1,4 +1,5 @@
 var mixin = require('smart-mixin');
+var assign = require('object-assign');
 
 var mixinProto = mixin({
   // lifecycle stuff is as you'd expect
@@ -26,15 +27,21 @@ function setInitialState(reactMixin) {
   var getInitialState = reactMixin.getInitialState;
   var componentWillMount = reactMixin.componentWillMount;
 
+  function applyInitialState(instance){
+      var state = instance.state || {};
+      assign(state, getInitialState.call(instance));
+      instance.state = state;
+  }
+
   if(getInitialState) {
     if(!componentWillMount) {
       reactMixin.componentWillMount = function() {
-        this.setState(getInitialState.call(this));
+          applyInitialState(this);
       };
     }
     else {
       reactMixin.componentWillMount = function() {
-        this.setState(getInitialState.call(this));
+        applyInitialState(this);
         componentWillMount.call(this);
       };
     }

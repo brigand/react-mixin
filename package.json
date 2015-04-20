@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "object-assign": "^2.0.0",
     "smart-mixin": "^1.2.0"
   },
   "devDependencies": {

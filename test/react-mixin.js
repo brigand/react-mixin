@@ -10,6 +10,7 @@ describe('react-mixin', function(){
 
         beforeEach(function(){
             function Component(){
+                this.state = {foo: 'bar'}
             };
             Component.prototype = Object.create(React.Component);
             Component.prototype.constructor = Component;
@@ -44,6 +45,7 @@ describe('react-mixin', function(){
 
         beforeEach(function () {
             function Component(){
+                this.state = {foo: 'bar'};
             };
             Component.prototype = Object.create(React.Component);
             Component.prototype.constructor = Component;
@@ -114,10 +116,13 @@ describe('react-mixin', function(){
                 reactMixin.onClass(reactClass, mixin);
                 expect(reactClass.prototype.componentWillMount).to.exist;
 
-                Object.create(reactClass.prototype).componentWillMount();
+                var instance = new reactClass(); 
+                expect(instance.state).to.eql({foo: 'bar'});
+                instance.componentWillMount();
 
-                expect(reactClass.prototype.setState.calledOnce).to.be.true;
+                expect(reactClass.prototype.setState.calledOnce).to.be.false;
                 expect(reactClass.prototype.getInitialState).not.to.exist;
+                expect(instance.state).to.eql({foo: 'bar', test: 'test'});
             });
 
             it('merges two componentWillMount', function () {
@@ -135,9 +140,9 @@ describe('react-mixin', function(){
                 reactMixin.onClass(reactClass, mixin);
                 expect(reactClass.prototype.componentWillMount).to.exist;
 
-                Object.create(reactClass.prototype).componentWillMount();
+                new reactClass().componentWillMount();
 
-                expect(reactClass.prototype.setState.calledTwice).to.be.true
+                expect(reactClass.prototype.setState.calledOnce).to.be.true
                 expect(reactClass.prototype.getInitialState).not.to.exist;
             });
 
@@ -155,7 +160,7 @@ describe('react-mixin', function(){
 
                 reactMixin.onClass(reactClass, mixin);
 
-                var obj = Object.create(reactClass.prototype);
+                var obj = new reactClass();
                 obj.componentWillMount();
 
                 expect(obj.state.counter).to.be.eql(23);
