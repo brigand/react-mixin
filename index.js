@@ -77,7 +77,7 @@ function mixinClass(reactClass, reactMixin) {
 }
 
 module.exports = (function () {
-  reactMixin = mixinProto;
+  var reactMixin = mixinProto;
 
   reactMixin.onClass = function(reactClass, mixin) {
     mixinClass(reactClass, mixin)
