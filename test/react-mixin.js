@@ -103,6 +103,27 @@ describe('react-mixin', function(){
             expect(reactClass.prototype.getDefaultProps).not.to.exist;
         });
 
+        it('handles contextTypes', function() {
+            function doTest(a, b){
+                function Component(){}
+                var mixinA = a !== null && {
+                    contextTypes: {foo: function(){ return a }}
+                };
+                var mixinB = b !== null && {
+                    contextTypes: {foo: function(){ return b }}
+                };
+
+                if (mixinA) reactMixin.onClass(Component, mixinA);
+                if (mixinB) reactMixin.onClass(Component, mixinB);
+
+                return Component.contextTypes.foo();
+            }
+            expect(doTest(true, true)).to.be.ok();
+            expect(doTest(false, true)).to.not.be.ok();
+            expect(doTest(true, false)).to.not.be.ok();
+            expect(doTest(false, false)).to.not.be.ok();
+        });
+
         describe('wrap getInitialState into componentWillMount', function () {
             it('creates new componentWillMount if there is no such', function () {
                 var mixin = {
