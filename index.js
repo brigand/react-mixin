@@ -58,11 +58,18 @@ function mixinClass(reactClass, reactMixin) {
   var staticProps = {};
 
   Object.keys(reactMixin).forEach(function(key) {
-    if(typeof reactMixin[key] === 'function') {
-      prototypeMethods[key] = reactMixin[key];
+    var descriptor = Object.getOwnPropertyDescriptor(reactMixin, key);
+    if (descriptor.value !== undefined) {
+      if (typeof descriptor.value === "function") {
+        prototypeMethods[key] = reactMixin[key];
+      }
+      else {
+        staticProps[key] = reactMixin[key];
+      }
     }
     else {
-      staticProps[key] = reactMixin[key];
+      // Assign getters and setters, without changing smart-mixin
+      Object.defineProperty(reactClass.prototype, key, descriptor);
     }
   });
 
@@ -71,21 +78,21 @@ function mixinClass(reactClass, reactMixin) {
   mixin({
     childContextTypes: mixin.MANY_MERGED_LOOSE,
     contextTypes: function(left, right, key){
-      if (!left) return right;  
-      if (!right) return left;  
-      
+      if (!left) return right;
+      if (!right) return left;
+
       var result = {};
       Object.keys(left).forEach(function(leftKey){
         if (!right[leftKey]) {
           result[leftKey] = left[leftKey];
         }
-      }); 
+      });
 
       Object.keys(right).forEach(function(rightKey){
         if (left[rightKey]) {
           result[rightKey] = function checkBothContextTypes(){
-              return right[rightKey].apply(this, arguments) && left[rightKey].apply(this, arguments); 
-          } 
+              return right[rightKey].apply(this, arguments) && left[rightKey].apply(this, arguments);
+          }
         } else {
           result[rightKey] = right[rightKey];
         }
