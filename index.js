@@ -68,31 +68,33 @@ function mixinClass(reactClass, reactMixin) {
 
   mixinProto(reactClass.prototype, prototypeMethods);
 
+  var mergePropTypes = function(left, right, key){
+    if (!left) return right;  
+    if (!right) return left;  
+
+    var result = {};
+    Object.keys(left).forEach(function(leftKey){
+      if (!right[leftKey]) {
+        result[leftKey] = left[leftKey];
+      }
+    }); 
+
+    Object.keys(right).forEach(function(rightKey){
+      if (left[rightKey]) {
+        result[rightKey] = function checkBothContextTypes(){
+            return right[rightKey].apply(this, arguments) && left[rightKey].apply(this, arguments); 
+        }
+      } else {
+        result[rightKey] = right[rightKey];
+      }
+    });
+
+    return result;
+  };
+
   mixin({
-    childContextTypes: mixin.MANY_MERGED_LOOSE,
-    contextTypes: function(left, right, key){
-      if (!left) return right;  
-      if (!right) return left;  
-      
-      var result = {};
-      Object.keys(left).forEach(function(leftKey){
-        if (!right[leftKey]) {
-          result[leftKey] = left[leftKey];
-        }
-      }); 
-
-      Object.keys(right).forEach(function(rightKey){
-        if (left[rightKey]) {
-          result[rightKey] = function checkBothContextTypes(){
-              return right[rightKey].apply(this, arguments) && left[rightKey].apply(this, arguments); 
-          } 
-        } else {
-          result[rightKey] = right[rightKey];
-        }
-      });
-
-      return result;
-    },
+    childContextTypes: mergePropTypes,
+    contextTypes: mergePropTypes,
     propTypes: mixin.MANY_MERGED_LOOSE,
     defaultProps: mixin.MANY_MERGED_LOOSE
   })(reactClass, staticProps);
