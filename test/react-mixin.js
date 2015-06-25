@@ -72,6 +72,19 @@ describe('react-mixin', function(){
             expect(reactClass.prototype.contextTypes).not.to.exist;
         });
 
+        it('can mixin a getter that will throw', function() {
+          var obj = {};
+          var desc = {
+            set: undefined,
+            get: function () { throw new Error('invalid context'); },
+            enumerable: true,
+            configurable: false
+          };
+          Object.defineProperty(obj, 'test', desc);
+          reactMixin.onClass(reactClass, obj);
+          expect(Object.getOwnPropertyDescriptor(reactClass.prototype, 'test')).to.eql(desc);
+        })
+
         it('calls getDefaultProps and sets result as static prop', function () {
             var mixin = {
                 getDefaultProps: function() {
@@ -137,7 +150,7 @@ describe('react-mixin', function(){
                 reactMixin.onClass(reactClass, mixin);
                 expect(reactClass.prototype.componentWillMount).to.exist;
 
-                var instance = new reactClass(); 
+                var instance = new reactClass();
                 expect(instance.state).to.eql({foo: 'bar'});
                 instance.componentWillMount();
 
