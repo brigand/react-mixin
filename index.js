@@ -98,6 +98,8 @@ function mixinClass(reactClass, reactMixin) {
     propTypes: mixin.MANY_MERGED_LOOSE,
     defaultProps: mixin.MANY_MERGED_LOOSE
   })(reactClass, staticProps);
+  
+  return reactClass;
 }
 
 module.exports = (function () {
