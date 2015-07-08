@@ -116,6 +116,8 @@ function mixinClass(reactClass, reactMixin) {
   if (reactMixin.mixins) {
     reactMixin.mixins.reverse().forEach(mixinClass.bind(null, reactClass));
   }
+
+  return reactClass;
 }
 
 module.exports = (function () {
