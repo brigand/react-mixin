@@ -58,7 +58,10 @@ function mixinClass(reactClass, reactMixin) {
   var staticProps = {};
 
   Object.keys(reactMixin).forEach(function(key) {
-    if(typeof reactMixin[key] === 'function') {
+    if (key === 'mixins') {
+      return; // Handled below to ensure proper order regardless of property iteration order
+    }
+    else if(typeof reactMixin[key] === 'function') {
       prototypeMethods[key] = reactMixin[key];
     }
     else {
@@ -69,21 +72,21 @@ function mixinClass(reactClass, reactMixin) {
   mixinProto(reactClass.prototype, prototypeMethods);
 
   var mergePropTypes = function(left, right, key){
-    if (!left) return right;  
-    if (!right) return left;  
+    if (!left) return right;
+    if (!right) return left;
 
     var result = {};
     Object.keys(left).forEach(function(leftKey){
       if (!right[leftKey]) {
         result[leftKey] = left[leftKey];
       }
-    }); 
+    });
 
     Object.keys(right).forEach(function(rightKey){
       if (left[rightKey]) {
         result[rightKey] = function checkBothContextTypes(){
-            return right[rightKey].apply(this, arguments) && left[rightKey].apply(this, arguments); 
-        }
+            return right[rightKey].apply(this, arguments) && left[rightKey].apply(this, arguments);
+        };
       } else {
         result[rightKey] = right[rightKey];
       }
@@ -98,20 +101,35 @@ function mixinClass(reactClass, reactMixin) {
     propTypes: mixin.MANY_MERGED_LOOSE,
     defaultProps: mixin.MANY_MERGED_LOOSE
   })(reactClass, staticProps);
+
+  // If more mixins are defined, they need to run. This emulate's react's behavior.
+  // See behavior in code at:
+  // https://github.com/facebook/react/blob/41aa3496aa632634f650edbe10d617799922d265/src/isomorphic/classic/class/ReactClass.js#L468
+  // Note the .reverse(). In React, a fresh constructor is created, then all mixins are mixed in recursively,
+  // then the actual spec is mixed in last.
+  //
+  // With ES6 classes, the properties are already there, so smart-mixin mixes functions (a, b) -> b()a(), which is
+  // the opposite of how React does it. If we reverse this array, we basically do the whole logic in reverse,
+  // which makes the result the same. See the test for more.
+  // See also:
+  // https://github.com/facebook/react/blob/41aa3496aa632634f650edbe10d617799922d265/src/isomorphic/classic/class/ReactClass.js#L853
+  if (reactMixin.mixins) {
+    reactMixin.mixins.reverse().forEach(mixinClass.bind(null, reactClass));
+  }
 }
 
 module.exports = (function () {
   var reactMixin = mixinProto;
 
   reactMixin.onClass = function(reactClass, mixin) {
-    return mixinClass(reactClass, mixin)
+    return mixinClass(reactClass, mixin);
   };
 
   reactMixin.decorate = function(mixin) {
     return function(reactClass) {
       return reactMixin.onClass(reactClass, mixin);
     };
-  }
+  };
 
   return reactMixin;
 })();

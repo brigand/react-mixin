@@ -137,7 +137,7 @@ describe('react-mixin', function(){
                 reactMixin.onClass(reactClass, mixin);
                 expect(reactClass.prototype.componentWillMount).to.exist;
 
-                var instance = new reactClass(); 
+                var instance = new reactClass();
                 expect(instance.state).to.eql({foo: 'bar'});
                 instance.componentWillMount();
 
@@ -188,4 +188,106 @@ describe('react-mixin', function(){
             });
         });
     });
+
+    describe('chaining mixins', function() {
+        it('allows mixins with more mixins', function() {
+            var deepestMixin = {
+                getDefaultProps: function() {
+                    return {
+                        test4: 'deepest'
+                    };
+                }
+            };
+            var deeperMixin = {
+                mixins: [deepestMixin],
+                getDefaultProps: function() {
+                    return {
+                        test3: 'deeper'
+                    };
+                }
+            };
+            var deepMixin = {
+                getDefaultProps: function() {
+                    return {
+                        test2: 'deep'
+                    };
+                }
+            };
+            var shallowMixin = {
+                mixins: [deepMixin, deeperMixin],
+                getDefaultProps: function() {
+                    return {
+                        test: 'test'
+                    };
+                }
+            };
+            var reactClass = function Component(){};
+
+            reactMixin.onClass(reactClass, shallowMixin);
+
+            expect(reactClass.defaultProps).to.eql({test: 'test', test2: 'deep', test3: 'deeper', test4: 'deepest'});
+            expect(reactClass.prototype.getDefaultProps).not.to.exist;
+        });
+
+        // Test deep mixin invocation order.
+        // From the React docs:
+        // "Methods defined on mixins run in the order mixins were listed, followed by a method call on the component."
+        //
+        // Mixins on mixins should run before the mixin itself, but not before mixins listed before it.
+        //
+        // +---------+       +----------+        +---------+
+        // |  spec   +-------> shallow  +------->+  deep1  |
+        // +---------+       +----------+        +----+----+
+        //                                            |
+        //                                       +----+----+         +---------+
+        //                                       |  deep2  +---------+ deepest |
+        //                                       +---------+         +---------+
+        //
+        //
+        // In this diagram, the correct invocation order is:
+        //
+        // deep1 -> deepest -> deep2 -> shallow -> spec
+        //
+        it('when chaining mixins, run in order listed', function() {
+            var counter = 0;
+            var deepestMixin = {
+                componentWillMount: function() {
+                    this.deepest = counter++;
+                }
+            };
+            var deepMixin2 = {
+                mixins: [deepestMixin],
+                componentWillMount: function() {
+                    this.deep2 = counter++;
+                }
+            };
+            var deepMixin = {
+                componentWillMount: function() {
+                    this.deep1 = counter++;
+                }
+            };
+            var shallowMixin = {
+                mixins: [deepMixin, deepMixin2],
+                componentWillMount: function() {
+                    this.shallow = counter++;
+                }
+            };
+            var reactClass = function Component(){};
+            reactClass.prototype.componentWillMount = function() {
+                this.spec = counter++;
+            };
+
+            reactMixin.onClass(reactClass, shallowMixin);
+            var obj = new reactClass();
+            obj.componentWillMount();
+            console.dir(obj);
+
+            expect(obj.deep1).to.equal(0);
+            expect(obj.deepest).to.equal(1);
+            expect(obj.deep2).to.equal(2);
+            expect(obj.shallow).to.equal(3);
+            expect(obj.spec).to.equal(4);
+        });
+    });
+
 });
