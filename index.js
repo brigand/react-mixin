@@ -28,15 +28,15 @@ function setInitialState(reactMixin) {
   var componentWillMount = reactMixin.componentWillMount;
 
   function applyInitialState(instance){
-      var state = instance.state || {};
-      assign(state, getInitialState.call(instance));
-      instance.state = state;
+    var state = instance.state || {};
+    assign(state, getInitialState.call(instance));
+    instance.state = state;
   }
 
   if(getInitialState) {
     if(!componentWillMount) {
       reactMixin.componentWillMount = function() {
-          applyInitialState(this);
+        applyInitialState(this);
       };
     }
     else {
@@ -60,6 +60,9 @@ function mixinClass(reactClass, reactMixin) {
   Object.keys(reactMixin).forEach(function(key) {
     if (key === 'mixins') {
       return; // Handled below to ensure proper order regardless of property iteration order
+    }
+    if (key === 'statics') {
+      return; // gets special handling
     }
     else if(typeof reactMixin[key] === 'function') {
       prototypeMethods[key] = reactMixin[key];
@@ -85,7 +88,7 @@ function mixinClass(reactClass, reactMixin) {
     Object.keys(right).forEach(function(rightKey){
       if (left[rightKey]) {
         result[rightKey] = function checkBothContextTypes(){
-            return right[rightKey].apply(this, arguments) && left[rightKey].apply(this, arguments);
+          return right[rightKey].apply(this, arguments) && left[rightKey].apply(this, arguments);
         };
       } else {
         result[rightKey] = right[rightKey];
@@ -101,6 +104,20 @@ function mixinClass(reactClass, reactMixin) {
     propTypes: mixin.MANY_MERGED_LOOSE,
     defaultProps: mixin.MANY_MERGED_LOOSE
   })(reactClass, staticProps);
+
+  // statics is a special case because it merges directly onto the class
+  if (reactMixin.statics) {
+    Object.getOwnPropertyNames(reactMixin.statics).forEach(function(key){
+      var left = reactClass[key];
+      var right = reactMixin.statics[key];
+
+      if (left !== undefined && right !== undefined) {
+          throw new TypeError('Cannot mixin statics because statics.' + key + ' and Component.' + key + ' are defined.');
+      }
+
+      reactClass[key] = left !== undefined ? left : right;
+    });
+  }
 
   // If more mixins are defined, they need to run. This emulate's react's behavior.
   // See behavior in code at:
