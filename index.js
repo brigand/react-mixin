@@ -16,7 +16,7 @@ var mixinProto = mixin({
 function setDefaultProps(reactMixin) {
   var getDefaultProps = reactMixin.getDefaultProps;
 
-  if(getDefaultProps) {
+  if (getDefaultProps) {
     reactMixin.defaultProps = getDefaultProps();
 
     delete reactMixin.getDefaultProps;
@@ -27,19 +27,18 @@ function setInitialState(reactMixin) {
   var getInitialState = reactMixin.getInitialState;
   var componentWillMount = reactMixin.componentWillMount;
 
-  function applyInitialState(instance){
+  function applyInitialState(instance) {
     var state = instance.state || {};
     assign(state, getInitialState.call(instance));
     instance.state = state;
   }
 
-  if(getInitialState) {
-    if(!componentWillMount) {
+  if (getInitialState) {
+    if (!componentWillMount) {
       reactMixin.componentWillMount = function() {
         applyInitialState(this);
       };
-    }
-    else {
+    } else {
       reactMixin.componentWillMount = function() {
         applyInitialState(this);
         componentWillMount.call(this);
@@ -63,31 +62,29 @@ function mixinClass(reactClass, reactMixin) {
     }
     if (key === 'statics') {
       return; // gets special handling
-    }
-    else if(typeof reactMixin[key] === 'function') {
+    } else if (typeof reactMixin[key] === 'function') {
       prototypeMethods[key] = reactMixin[key];
-    }
-    else {
+    } else {
       staticProps[key] = reactMixin[key];
     }
   });
 
   mixinProto(reactClass.prototype, prototypeMethods);
 
-  var mergePropTypes = function(left, right, key){
+  var mergePropTypes = function(left, right, key) {
     if (!left) return right;
     if (!right) return left;
 
     var result = {};
-    Object.keys(left).forEach(function(leftKey){
+    Object.keys(left).forEach(function(leftKey) {
       if (!right[leftKey]) {
         result[leftKey] = left[leftKey];
       }
     });
 
-    Object.keys(right).forEach(function(rightKey){
+    Object.keys(right).forEach(function(rightKey) {
       if (left[rightKey]) {
-        result[rightKey] = function checkBothContextTypes(){
+        result[rightKey] = function checkBothContextTypes() {
           return right[rightKey].apply(this, arguments) && left[rightKey].apply(this, arguments);
         };
       } else {
@@ -107,12 +104,12 @@ function mixinClass(reactClass, reactMixin) {
 
   // statics is a special case because it merges directly onto the class
   if (reactMixin.statics) {
-    Object.getOwnPropertyNames(reactMixin.statics).forEach(function(key){
+    Object.getOwnPropertyNames(reactMixin.statics).forEach(function(key) {
       var left = reactClass[key];
       var right = reactMixin.statics[key];
 
       if (left !== undefined && right !== undefined) {
-          throw new TypeError('Cannot mixin statics because statics.' + key + ' and Component.' + key + ' are defined.');
+        throw new TypeError('Cannot mixin statics because statics.' + key + ' and Component.' + key + ' are defined.');
       }
 
       reactClass[key] = left !== undefined ? left : right;
@@ -137,7 +134,7 @@ function mixinClass(reactClass, reactMixin) {
   return reactClass;
 }
 
-module.exports = (function () {
+module.exports = (function() {
   var reactMixin = mixinProto;
 
   reactMixin.onClass = function(reactClass, mixin) {
