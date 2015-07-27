@@ -124,6 +124,29 @@ describe('react-mixin', function(){
             expect(doTest(false, false)).to.not.be.ok();
         });
 
+        it('merges statics', function(){
+            function doTest(a, b){
+                function Component(){}
+                var mixinA = a != null && {
+                    statics: a
+                };
+                var mixinB = b != null && {
+                    statics: b
+                };
+
+                if (mixinA) reactMixin.onClass(Component, mixinA);
+                if (mixinB) reactMixin.onClass(Component, mixinB);
+
+                return Component;
+            }
+
+            expect(doTest({foo: 'b'}).foo).to.be('b');
+            expect(doTest({}, {foo: 'c'}).foo).to.be('c');
+            expect(function(){
+              doTest({foo: 'e'}, {foo: 'f'})
+            }).to.throwException();
+        });
+
         describe('wrap getInitialState into componentWillMount', function () {
             it('creates new componentWillMount if there is no such', function () {
                 var mixin = {
