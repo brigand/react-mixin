@@ -99,7 +99,8 @@ function mixinClass(reactClass, reactMixin) {
     childContextTypes: mergePropTypes,
     contextTypes: mergePropTypes,
     propTypes: mixin.MANY_MERGED_LOOSE,
-    defaultProps: mixin.MANY_MERGED_LOOSE
+    defaultProps: mixin.MANY_MERGED_LOOSE,
+    statics: mixin.MANY_MERGED_LOOSE
   })(reactClass, staticProps);
 
   // If more mixins are defined, they need to run. This emulate's react's behavior.
