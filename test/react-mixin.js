@@ -157,6 +157,18 @@ describe('react-mixin', function() {
         expect(reactClass.contextTypes).not.to.be.ok();
         expect(reactClass.prototype.getChildContext).not.to.be.ok();
       });
+
+      it("should correctly identify constructor", function () {
+        var mixin = {
+          contextTypes: {},
+          getChildContext: function() {}
+        };
+
+        var NewComponent = reactMixin.decorate(mixin)(reactClass);
+        var instance = new NewComponent();
+        expect(instance.constructor).not.to.be(reactClass);
+        expect(instance.constructor).to.be(NewComponent);
+      });
     });
 
     it('handles contextTypes', function() {

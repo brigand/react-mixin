@@ -146,10 +146,17 @@ module.exports = (function() {
     return function(reactClass) {
       // Clone the incoming class
       var newClass = function(props) {
-        reactClass.apply(this, props);
+        reactClass.apply(this, arguments);
       };
       assign(newClass, reactClass);
-      newClass.prototype = Object.create(reactClass.prototype)
+      newClass.prototype = Object.create(reactClass.prototype, {
+          constructor: {
+              value: newClass,
+              enumerable: false,
+              writable: true,
+              configurable: true
+          }
+      });
       return reactMixin.onClass(newClass, mixin);
     };
   };
