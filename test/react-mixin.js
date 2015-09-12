@@ -268,6 +268,26 @@ describe('react-mixin', function() {
 
             expect(obj.state.counter).to.be.eql(23);
           });
+
+          it('should not mutate mixin definition', function () {
+            var mixin = {
+              getInitialState: function() {
+                return {
+                  counter: 22
+                }
+              },
+              getDefaultProps: function () {
+                return {
+                  step: 1
+                }
+              }
+            };
+
+            reactMixin.onClass(reactClass, mixin);
+
+            expect(mixin.getInitialState).to.be.a('function');
+            expect(mixin.getDefaultProps).to.be.a('function');
+          });
         });
       });
 
