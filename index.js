@@ -138,12 +138,26 @@ module.exports = (function() {
   var reactMixin = mixinProto;
 
   reactMixin.onClass = function(reactClass, mixin) {
-    return mixinClass(reactClass, mixin);
+    mixinClone = assign({}, mixin);
+    return mixinClass(reactClass, mixinClone);
   };
 
   reactMixin.decorate = function(mixin) {
     return function(reactClass) {
-      return reactMixin.onClass(reactClass, mixin);
+      // Clone the incoming class
+      var newClass = function(props) {
+        reactClass.apply(this, arguments);
+      };
+      assign(newClass, reactClass);
+      newClass.prototype = Object.create(reactClass.prototype, {
+          constructor: {
+              value: newClass,
+              enumerable: false,
+              writable: true,
+              configurable: true
+          }
+      });
+      return reactMixin.onClass(newClass, mixin);
     };
   };
 
