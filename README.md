@@ -55,6 +55,8 @@ reactMixin.onClass(Foo, mixin);
 
 For more readability, there is an es7 decorator proposal.  With the latest babel version and the stage config option set to 0 or 1, you can use decorators.
 
+> Note: this creates a wrapper around the component instead of directly mutating it.
+
 ```js
 @reactMixin.decorate(mixin)
 class Foo {
