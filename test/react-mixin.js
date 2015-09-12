@@ -111,22 +111,52 @@ describe('react-mixin', function() {
       expect(reactClass.prototype.getDefaultProps).not.to.exist;
     });
 
-    it('acts as decorator', function() {
-      var mixin = {
-        getDefaultProps: function() {
-          return {
-            test: 'test'
+    describe("decorator", function () {
+      it('acts as decorator', function() {
+        var mixin = {
+          getDefaultProps: function() {
+            return {
+              test: 'test'
+            }
           }
-        }
-      };
+        };
 
-      var decorator = reactMixin.decorate(mixin);
-      var instance = decorator(reactClass);
+        var decorator = reactMixin.decorate(mixin);
+        var instance = decorator(reactClass);
 
-      expect(reactClass.defaultProps).to.eql({
-        test: 'test'
+        expect(instance.defaultProps).to.eql({
+          test: 'test'
+        });
+        expect(instance.prototype.getDefaultProps).not.to.exist;
       });
-      expect(reactClass.prototype.getDefaultProps).not.to.exist;
+
+      it('mixins proto and static props separately', function() {
+        var mixin = {
+          contextTypes: {},
+          getChildContext: function() {}
+        };
+
+        var NewComponent = reactMixin.decorate(mixin)(reactClass);
+
+        expect(NewComponent.contextTypes).to.exist;
+        expect(NewComponent.prototype.getChildContext).to.exist;
+
+        expect(NewComponent.getChildContext).not.to.exist;
+        expect(NewComponent.prototype.contextTypes).not.to.exist;
+      });
+
+      it('should return a copy of the class', function () {
+        var mixin = {
+          contextTypes: {},
+          getChildContext: function() {}
+        };
+
+        var NewComponent = reactMixin.decorate(mixin)(reactClass);
+        expect(NewComponent).not.to.be(reactClass);
+        expect(NewComponent.prototype).not.to.be(reactClass.prototype);
+        expect(reactClass.contextTypes).not.to.be.ok();
+        expect(reactClass.prototype.getChildContext).not.to.be.ok();
+      });
     });
 
     it('handles contextTypes', function() {
@@ -396,5 +426,4 @@ describe('react-mixin', function() {
           expect(obj.spec).to.equal(4);
         });
       });
-
     });
