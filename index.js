@@ -153,7 +153,9 @@ module.exports = (function() {
       for (var key in reactClass) {
         // Ordinarily, you'd use reactClass.hasOwnProperty(key) here
         // But we want to catch ALL static properties
-        statics[key] = reactClass[key];
+        if (!Function.prototype[key]) {
+          statics[key] = reactClass[key];
+        }
       }
       assign(newClass, statics);
       newClass.prototype = Object.create(reactClass.prototype, {
