@@ -9,13 +9,15 @@
   },
   "devDependencies": {
     "6to5ify": "^4.0.0",
+    "browserify": "^11.1.0",
     "expect.js": "^0.3.1",
     "mocha": "^2.1.0",
     "react": "^0.13.0-beta.1",
     "sinon": "^1.12.2"
   },
   "scripts": {
-    "test": "mocha test/*"
+    "test": "mocha test/*",
+    "build-global": "browserify global.js > dist/react-mixin.js"
   },
   "repository": {
     "type": "git",
