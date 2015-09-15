@@ -169,6 +169,27 @@ describe('react-mixin', function() {
         expect(instance.constructor).not.to.be(reactClass);
         expect(instance.constructor).to.be(NewComponent);
       });
+
+      it('merges contextTypes even if class is proxied', function () {
+        reactClass.contextTypes = {
+          existingContext: React.PropTypes.any
+        };
+
+        var mixin = {
+          contextTypes: {
+            mixinContext: React.PropTypes.any
+          }
+        };
+
+        // Emulate what react-proxy does to a class
+        // https://github.com/gaearon/react-proxy/blob/master/src/createClassProxy.js
+        var proxiedClass = function Proxied() {};
+        proxiedClass.prototype.constructor = proxiedClass;
+        proxiedClass.prototype.constructor.__proto__ = reactClass;
+
+        var NewComponent = reactMixin.decorate(mixin)(proxiedClass);
+        expect (NewComponent.contextTypes).to.have.keys('existingContext', 'mixinContext');
+      });
     });
 
     it('handles contextTypes', function() {
