@@ -9,10 +9,10 @@ Install with one of:
 
 ```sh
 # recommended
-npm install --save react-mixin@1
+npm install --save react-mixin@2
 
 # will expose window.reactMixin or the reactMixin AMD module
-curl 'wzrd.in/standalone/react-mixin@1' > vendor/react-mixin.js
+curl 'wzrd.in/standalone/react-mixin@2' > vendor/react-mixin.js
 ```
 
 
