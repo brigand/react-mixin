@@ -169,6 +169,16 @@ module.exports = (function() {
       return reactMixin.onClass(newClass, mixin);
     };
   };
+  
+  reactMixin.mixin = function() {
+    return function (Component) {
+      var mixins = Array.prototype.slice.call(arguments);
+      for (var mi = 0, mlen = mixins.length; mi < mlen; mi++) {
+        Component = reactMixin.onClass(Component, mixins[mi]);
+      }
+      return Component;
+    }
+  }
 
   return reactMixin;
 })();
