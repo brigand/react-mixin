@@ -93,6 +93,14 @@ class Foo extends React.Component {
 }
 ```
 
+---
+
+## Aside: Do I need mixins?
+
+Less and less each week. I expect that by December mixin usage will be nearly 0 due to high order components. Most of the common packages have already moved away from mixins. This package is an *upgrade path*, not something you should use long term.
+
+---
+
 ## But... autobinding!
 
 If you need autobinding because a mixin depends on it, you can bind the needed methods in the constructor, or do something like this (haven't given it much thought, suggestions welcome).
