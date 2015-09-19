@@ -28,6 +28,17 @@ reactMixin(Foo.prototype, someMixin);
 reactMixin(Foo.prototype, someOtherMixin);
 ```
 
+---
+
+## Aside: Do I need mixins?
+
+Less and less each week. I expect that by December mixin usage will be nearly 0 due to [high order components][hoc-article]. Most of the common packages have already moved away from mixins. This package is an *upgrade path*, not something you should use long term.
+
+[hoc-article]: https://medium.com/@dan_abramov/mixins-are-dead-long-live-higher-order-components-94a0d2f9e750
+
+---
+
+
 ## Class level behavior
 
 Many of the things that were regular properties in createClass are now static properties of the class.  To have things like getDefaultProps, propTypes, and getInitialState working correctly you need to apply react-mixin a level higher than the prototype: the class itself.
@@ -93,14 +104,6 @@ class Foo extends React.Component {
 }
 ```
 
----
-
-## Aside: Do I need mixins?
-
-Less and less each week. I expect that by December mixin usage will be nearly 0 due to high order components. Most of the common packages have already moved away from mixins. This package is an *upgrade path*, not something you should use long term.
-
----
-
 ## But... autobinding!
 
 If you need autobinding because a mixin depends on it, you can bind the needed methods in the constructor, or do something like this (haven't given it much thought, suggestions welcome).
@@ -127,16 +130,11 @@ Like this but want to use it outside of react?  See [smart-mixin][1] and define 
 
 ## Should I use this?
 
-I can't think of a more elegant solution to mixins in es6 classes.  If someone comes up with one, create an issue
-and I'll link to it here.
+Avoid mixins if you can, but if you can't, this seems to be the best way to get them with es6 classes.
 
-In the future people will likely use [high order components](https://medium.com/@dan_abramov/mixins-are-dead-long-live-higher-order-components-94a0d2f9e750) instead of mixins, making this library obsolete. 
+Should you use es6 classes for react components? It seems to be the future with createClass becoming legacy. It's best if everyone uses one pattern for better or worse.
 
-Should you use es6 classes for react components?  Based on the hacks required above, I'd probably avoid it.
-It's important that react makes it an option, and it's important to be able to use mixins with them, which
-is why this library exists.
-
-`createClass` isn't going anywhere.
+That said, `createClass` isn't going anywhere in the near future.
 
 [1]: https://github.com/brigand/smart-mixin
 
