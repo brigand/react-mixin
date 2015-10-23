@@ -129,12 +129,9 @@ class Foo {
 Like this but want to use it outside of react?  See [smart-mixin][1] and define your own mixin spec.
 
 ## Should I use this?
+90% of the time you don't need mixins, and can use high order components instead. For the 10% of the cases where mixins are best (e.g. PureRenderMixin and react-router's Lifecycle mixin), this library can be very useful.
 
-Avoid mixins if you can, but if you can't, this seems to be the best way to get them with es6 classes.
-
-Should you use es6 classes for react components? It seems to be the future with createClass becoming legacy. It's best if everyone uses one pattern for better or worse.
-
-That said, `createClass` isn't going anywhere in the near future.
+Should you use es6 classes for react components? It seems to be the future with createClass becoming legacy. It's best if everyone uses one pattern for better or worse. That said, `createClass` isn't going anywhere in the near future.
 
 [1]: https://github.com/brigand/smart-mixin
 
