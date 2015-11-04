@@ -75,15 +75,7 @@ class Foo {
 }
 ```
 
-This is a very thin wrapper.
-
-```js
-  reactMixin.decorate = function(mixin) {
-    return function(reactClass) {
-      return reactMixin.onClass(reactClass, mixin);
-    };
-  }
-```
+Note that this does prototypical inheritance, meaning the returned class is a new class rather than mutating Foo.
 
 ## Differences from createClass
 

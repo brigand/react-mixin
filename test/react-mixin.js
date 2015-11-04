@@ -1,3 +1,4 @@
+require('babel-polyfill');
 var reactMixin = require('..');
 var expect = require('expect.js');
 var sinon = require('sinon');
@@ -14,8 +15,7 @@ describe('react-mixin', function() {
         this.state = {
           foo: 'bar'
         }
-      }
-      ;
+      };
       Component.prototype = Object.create(React.Component);
       Component.prototype.constructor = Component;
       Component.prototype.render = function() {
@@ -156,6 +156,16 @@ describe('react-mixin', function() {
         expect(NewComponent.prototype).not.to.be(reactClass.prototype);
         expect(reactClass.contextTypes).not.to.be.ok();
         expect(reactClass.prototype.getChildContext).not.to.be.ok();
+      });
+
+      it('preserves statics', function () {
+        var mixin = {};
+        Object.defineProperty(reactClass, 'nonEnumerableMethod', {
+          value: function(){}
+        });
+        var newComponent = reactMixin.decorate(mixin)(reactClass);
+        expect(newComponent.nonEnumerableMethod).to.be.ok();
+        expect(newComponent.nonEnumerableMethod).to.equal(reactClass.nonEnumerableMethod);
       });
 
       it("should correctly identify constructor", function () {
