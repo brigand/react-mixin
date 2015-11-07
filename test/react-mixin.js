@@ -139,19 +139,6 @@ describe('react-mixin', function() {
         expect(newComponent.nonEnumerableMethod).to.equal(reactClass.nonEnumerableMethod);
       });
 
-      // This no longer works due to the reversion of #31, the decorated class is modified.
-      xit("should correctly identify constructor", function () {
-        var mixin = {
-          contextTypes: {},
-          getChildContext: function() {}
-        };
-
-        var NewComponent = reactMixin.decorate(mixin)(reactClass);
-        var instance = new NewComponent();
-        expect(instance.constructor).not.to.be(reactClass);
-        expect(instance.constructor).to.be(NewComponent);
-      });
-
       it('merges contextTypes even if class is proxied', function () {
         reactClass.contextTypes = {
           existingContext: React.PropTypes.any
