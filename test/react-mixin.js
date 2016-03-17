@@ -82,7 +82,10 @@ describe('react-mixin', function() {
     it('mixins proto and static props separately', function() {
       var mixin = {
         contextTypes: {},
-        getChildContext: function() {}
+        getChildContext: function() {},
+        getDefaultProps: function() {
+          return {exampleProp: 'exampleValue'};
+        }
       };
 
       reactMixin.onClass(reactClass, mixin);
@@ -91,7 +94,12 @@ describe('react-mixin', function() {
       expect(reactClass.prototype.getChildContext).to.exist;
 
       expect(reactClass.getChildContext).not.to.exist;
-      expect(reactClass.prototype.contextTypes).not.to.exist;
+      expect(reactClass.prototype.contextTypes).not.to.exist();
+
+      expect(reactClass.prototype.getDefaultProps).not.to.exist;
+      expect(reactClass.defaultProps).to.eql({
+        exampleProp: 'exampleValue'
+      });
     });
 
     it('calls getDefaultProps and sets result as static prop', function() {
