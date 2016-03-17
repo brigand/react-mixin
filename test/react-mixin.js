@@ -94,7 +94,7 @@ describe('react-mixin', function() {
       expect(reactClass.prototype.getChildContext).to.exist;
 
       expect(reactClass.getChildContext).not.to.exist;
-      expect(reactClass.prototype.contextTypes).not.to.exist();
+      expect(reactClass.prototype.contextTypes).not.to.exist;
 
       expect(reactClass.prototype.getDefaultProps).not.to.exist;
       expect(reactClass.defaultProps).to.eql({
