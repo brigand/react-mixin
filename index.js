@@ -138,6 +138,8 @@ module.exports = (function() {
   var reactMixin = mixinProto;
 
   reactMixin.onClass = function(reactClass, mixin) {
+    // we mutate the mixin so let's clone it
+    mixin = assign({}, mixin);
     return mixinClass(reactClass, mixin);
   };
 
