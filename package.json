@@ -5,7 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "object-assign": "^4.0.1",
-    "smart-mixin": "^1.2.0"
+    "smart-mixin": "^2.0.0"
   },
   "devDependencies": {
     "6to5ify": "^4.0.0",
