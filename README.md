@@ -36,7 +36,7 @@ reactMixin(Foo.prototype, someOtherMixin);
 
 If you do need mixins, using this library lets you avoid thinking about the merging of conflicting methods, and other oddities of react's mixin system.
 
-[hoc-article]: https://medium.com/@dan_abramov/mixins-are-dead-long-live-higher-order-components-94a0d2f9e750
+[hoc-article]: https://facebook.github.io/react/blog/2016/07/13/mixins-considered-harmful.html
 
 ---
 
