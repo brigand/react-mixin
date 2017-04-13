@@ -124,7 +124,7 @@ Like this but want to use it outside of react?  See [smart-mixin][1] and define 
 
 ## Should I use es6 classes?
 
-It seems to be the future with createClass becoming legacy. It's best if everyone uses one pattern for better or worse. That said, `createClass` isn't going anywhere in the near future.
+It seems to be the future with `createClass` becoming legacy. It's best if everyone uses one pattern for better or worse. `createClass` is being removed from React core in 16.0.0, but you can still install it as a separate package.
 
 [1]: https://github.com/brigand/smart-mixin
 
