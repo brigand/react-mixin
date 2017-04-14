@@ -162,9 +162,8 @@ module.exports = (function () {
   }
 
   reactMixin.bindClass = function (clazz, mixin) {
-    const boundMixin = autobound(ToolTipMixin)
     reactMixin.onClass(clazz, mixin);
-    reactMixin.onClass(clazz, boundMixin);
+    reactMixin.onClass(clazz, autobound(mixin));
   }
 
   reactMixin.onClass = function (reactClass, mixin) {
