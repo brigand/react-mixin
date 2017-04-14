@@ -22,7 +22,7 @@ Here's an example:
 var reactMixin = require('react-mixin');
 var someMixin = require('some-mixin');
 class Foo extends React.Component {
-    render: function(){ return <div /> }    
+    render: function(){ return <div /> }
 }
 reactMixin(Foo.prototype, someMixin);
 reactMixin(Foo.prototype, someOtherMixin);
@@ -102,25 +102,39 @@ class Foo extends React.Component {
 
 If you need autobinding because a mixin depends on it, you can bind the needed methods in the constructor, or do something like this (haven't given it much thought, suggestions welcome).
 
-```js
-function autobind(methodNames){
-    return {
-        componentWillMount: function(){
-            methodNames.forEach((name) => {
-                this[name] = this[name].bind(this);
-            });
-        }
-    };
-}
+`reactMixin` comes with a few autobind helpers:
 
+* `reactMixin.autobind(Object.keys(mixin))`
+* `reactMixin.autobound(mixin)`
+
+### Autobind examples
+
+Using `autobind`
+
+```js
 @reactMixin.decorate(mixin)
-@reactMixin.decorate(autobind(Object.keys(mixin)))
+@reactMixin.decorate(reactMixin.autobind(Object.keys(mixin)))
 class Foo {
   ...
 }
 ```
 
-Like this but want to use it outside of react?  See [smart-mixin][1] and define your own mixin spec.
+Using `autobound`
+
+```js
+@reactMixin.decorate(mixin)
+@reactMixin.decorate(reactMixin.autobound(mixin))
+class Foo {
+  ...
+}
+```
+
+You can also simply use `bindClass` or `bindProto`:
+
+* `reactMixin.bindClass(Foo, mixin)`
+* `reactMixin.bindProto(Foo, mixin)` (if `Foo` is not an ES6 class)
+
+Want to use it outside of react?  See [smart-mixin][1] and define your own mixin spec.
 
 ## Should I use es6 classes?
 
