@@ -35,11 +35,11 @@ function setInitialState(reactMixin) {
 
   if (getInitialState) {
     if (!componentWillMount) {
-      reactMixin.componentWillMount = function() {
+      reactMixin.componentWillMount = function () {
         applyInitialState(this);
       };
     } else {
-      reactMixin.componentWillMount = function() {
+      reactMixin.componentWillMount = function () {
         applyInitialState(this);
         componentWillMount.call(this);
       };
@@ -56,7 +56,7 @@ function mixinClass(reactClass, reactMixin) {
   var prototypeMethods = {};
   var staticProps = {};
 
-  Object.keys(reactMixin).forEach(function(key) {
+  Object.keys(reactMixin).forEach(function (key) {
     if (key === 'mixins') {
       return; // Handled below to ensure proper order regardless of property iteration order
     }
@@ -71,18 +71,18 @@ function mixinClass(reactClass, reactMixin) {
 
   mixinProto(reactClass.prototype, prototypeMethods);
 
-  var mergePropTypes = function(left, right, key) {
+  var mergePropTypes = function (left, right, key) {
     if (!left) return right;
     if (!right) return left;
 
     var result = {};
-    Object.keys(left).forEach(function(leftKey) {
+    Object.keys(left).forEach(function (leftKey) {
       if (!right[leftKey]) {
         result[leftKey] = left[leftKey];
       }
     });
 
-    Object.keys(right).forEach(function(rightKey) {
+    Object.keys(right).forEach(function (rightKey) {
       if (left[rightKey]) {
         result[rightKey] = function checkBothContextTypes() {
           return right[rightKey].apply(this, arguments) && left[rightKey].apply(this, arguments);
@@ -104,7 +104,7 @@ function mixinClass(reactClass, reactMixin) {
 
   // statics is a special case because it merges directly onto the class
   if (reactMixin.statics) {
-    Object.getOwnPropertyNames(reactMixin.statics).forEach(function(key) {
+    Object.getOwnPropertyNames(reactMixin.statics).forEach(function (key) {
       var left = reactClass[key];
       var right = reactMixin.statics[key];
 
@@ -134,17 +134,46 @@ function mixinClass(reactClass, reactMixin) {
   return reactClass;
 }
 
-module.exports = (function() {
+function autobind(methodNames) {
+  return {
+    componentWillMount: function () {
+      methodNames.forEach((name) => {
+        prop = this[name]
+        this[name] = prop.bind(this);
+      });
+    }
+  };
+}
+
+function autobound(mixin) {
+  return autobind(Object.keys(mixin))
+}
+
+module.exports = (function () {
   var reactMixin = mixinProto;
 
-  reactMixin.onClass = function(reactClass, mixin) {
+  reactMixin.autobind = autobind
+  reactMixin.autobound = autobound
+
+  reactMixin.bindProto = function (clazz, mixin) {
+    const boundMixin = autobound(ToolTipMixin)
+    reactMixin(clazz.prototype, mixin);
+    reactMixin(clazz.prototype, boundMixin);
+  }
+
+  reactMixin.bindClass = function (clazz, mixin) {
+    reactMixin.onClass(clazz, mixin);
+    reactMixin.onClass(clazz, autobound(mixin));
+  }
+
+  reactMixin.onClass = function (reactClass, mixin) {
     // we mutate the mixin so let's clone it
     mixin = assign({}, mixin);
     return mixinClass(reactClass, mixin);
   };
 
-  reactMixin.decorate = function(mixin) {
-    return function(reactClass) {
+  reactMixin.decorate = function (mixin) {
+    return function (reactClass) {
       return reactMixin.onClass(reactClass, mixin);
     };
   };
