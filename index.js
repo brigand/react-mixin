@@ -99,7 +99,8 @@ function mixinClass(reactClass, reactMixin) {
     childContextTypes: mergePropTypes,
     contextTypes: mergePropTypes,
     propTypes: mixin.MANY_MERGED_LOOSE,
-    defaultProps: mixin.MANY_MERGED_LOOSE
+    defaultProps: mixin.MANY_MERGED_LOOSE,
+    statics: mixin.MANY_MERGED_LOOSE
   })(reactClass, staticProps);
 
   // statics is a special case because it merges directly onto the class
