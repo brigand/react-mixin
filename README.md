@@ -77,6 +77,30 @@ class Foo {
 
 Note that this does prototypical inheritance, meaning the returned class is a new class rather than mutating Foo.
 
+## And more
+
+Method `mixin` is a decorator for many mixins. It will be save `displayName` for your component.
+
+```js
+// Real world example
+
+import React, { Component } from 'react';
+import { mixin as Mixin } from 'react-mixin';
+import { Navigate } from 'react-router';
+import { LogMixins } from 'private-logger';
+
+@Mixin(Navigate, LogMixins)
+export default class SearchComponent extends Component {
+  onChange() {
+    this.say('Start search:', this.state.query); // Method from private-logger.LogMixins
+    this.transitionTo('search', { query: this.state.query }); // Method from react-router.Navigate
+  }
+  render() {
+    // return component code
+  }
+}
+```
+
 ## Differences from createClass
 
 @ndout resolved the differences by adding `reactMixin.onClass`.  If there are any more incompatibilites, **other than autobinding methods which is intentionally omitted**, please create an issue.
