@@ -30,7 +30,7 @@ function setInitialState(reactMixin) {
   function applyInitialState(instance) {
     var state = instance.state || {};
     assign(state, getInitialState.call(instance));
-    instance.state = state;
+    instance.setState(state);
   }
 
   if (getInitialState) {
