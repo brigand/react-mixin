@@ -1,5 +1,7 @@
 ![travis](https://travis-ci.org/brigand/react-mixin.svg)
 
+### Note: mixins are basically dead. Only use this as a migration path for legacy code. Prefer [High Order Components](https://facebook.github.io/react/docs/higher-order-components.html).
+
 Want to use ES6/CoffeeScript/TypeScript/{InsertNoun}Script classes, and mixins?
 
 React doesn't have anything built in for this, but don't worry!  This package implements
