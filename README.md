@@ -30,6 +30,30 @@ reactMixin(Foo.prototype, someMixin);
 reactMixin(Foo.prototype, someOtherMixin);
 ```
 
+### Note: Version 5.0 switches to `UNSAFE_`
+
+The following methods are deprecated in React 16.3.0.
+
+- `UNSAFE_componentWillMount`
+- `UNSAFE_componentWillReceiveProps`
+- `UNSAFE_componentWillUpdate`
+
+In version `5.0` of this plugin, the previously named `componentWillMount` and friends
+will no longer behave correctly, and instead `UNSAFE_componentWillMount` must be specified
+in the mixin.
+
+A new utility has been added that can convert a mixin to this format.
+
+```js
+var reactMixin = require('react-mixin');
+var toUnsafe = require('react-mixin/toUnsafe');
+var someMixin = require('some-mixin');
+
+var fixedMixin = toUnsafe(someMixin);
+
+reactMixin(Foo.prototype, fixedMixin);
+```
+
 ---
 
 ## Aside: Do I need mixins?

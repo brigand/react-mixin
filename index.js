@@ -4,10 +4,10 @@ var assign = require('object-assign');
 var mixinProto = mixin({
   // lifecycle stuff is as you'd expect
   componentDidMount: mixin.MANY,
-  componentWillMount: mixin.MANY,
-  componentWillReceiveProps: mixin.MANY,
+  UNSAFE_componentWillMount: mixin.MANY,
+  UNSAFE_componentWillReceiveProps: mixin.MANY,
   shouldComponentUpdate: mixin.ONCE,
-  componentWillUpdate: mixin.MANY,
+  UNSAFE_componentWillUpdate: mixin.MANY,
   componentDidUpdate: mixin.MANY,
   componentWillUnmount: mixin.MANY,
   getChildContext: mixin.MANY_MERGED
@@ -25,7 +25,7 @@ function setDefaultProps(reactMixin) {
 
 function setInitialState(reactMixin) {
   var getInitialState = reactMixin.getInitialState;
-  var componentWillMount = reactMixin.componentWillMount;
+  var UNSAFE_componentWillMount = reactMixin.UNSAFE_componentWillMount;
 
   function applyInitialState(instance) {
     var state = instance.state || {};
@@ -34,14 +34,14 @@ function setInitialState(reactMixin) {
   }
 
   if (getInitialState) {
-    if (!componentWillMount) {
-      reactMixin.componentWillMount = function() {
+    if (!UNSAFE_componentWillMount) {
+      reactMixin.UNSAFE_componentWillMount = function() {
         applyInitialState(this);
       };
     } else {
-      reactMixin.componentWillMount = function() {
+      reactMixin.UNSAFE_componentWillMount = function() {
         applyInitialState(this);
-        componentWillMount.call(this);
+        UNSAFE_componentWillMount.call(this);
       };
     }
 

@@ -4,6 +4,7 @@ var expect = require('expect.js');
 var sinon = require('sinon');
 var React = require('react');
 var objectAssign = require('object-assign');
+var toUnsafe = require('../toUnsafe');
 
 describe('react-mixin', function() {
   describe('mixins prototype', function() {
@@ -37,11 +38,11 @@ describe('react-mixin', function() {
     it("merges lifecycle methods", function() {
       var s1 = sinon.spy();
       var s2 = sinon.spy();
-      proto.componentWillMount = s1;
+      proto.UNSAFE_componentWillMount = s1;
       reactMixin(proto, {
-        componentWillMount: s2
+        UNSAFE_componentWillMount: s2
       });
-      instance.componentWillMount();
+      instance.UNSAFE_componentWillMount();
       expect(s1.called).to.be.ok();
       expect(s2.called).to.be.ok();
     });
@@ -238,8 +239,8 @@ describe('react-mixin', function() {
         }).to.throwException();
       });
 
-      describe('wrap getInitialState into componentWillMount', function() {
-        it('creates new componentWillMount if there is no such', function() {
+      describe('wrap getInitialState into UNSAFE_componentWillMount', function() {
+        it('creates new UNSAFE_componentWillMount if there is no such', function() {
           var mixin = {
             getInitialState: function() {
               return {
@@ -249,13 +250,13 @@ describe('react-mixin', function() {
           };
 
           reactMixin.onClass(reactClass, mixin);
-          expect(reactClass.prototype.componentWillMount).to.exist;
+          expect(reactClass.prototype.UNSAFE_componentWillMount).to.exist;
 
           var instance = new reactClass();
           expect(instance.state).to.eql({
             foo: 'bar'
           });
-          instance.componentWillMount();
+          instance.UNSAFE_componentWillMount();
 
           expect(reactClass.prototype.setState.calledOnce).to.be.false;
           expect(reactClass.prototype.getInitialState).not.to.exist;
@@ -265,14 +266,14 @@ describe('react-mixin', function() {
           });
         });
 
-        it('merges two componentWillMount', function() {
+        it('merges two UNSAFE_componentWillMount', function() {
           var mixin = {
             getInitialState: function() {
               return {
                 test: 'test'
               }
             },
-            componentWillMount: function() {
+            UNSAFE_componentWillMount: function() {
               this.setState({
                 test1: 'test1'
               })
@@ -280,22 +281,22 @@ describe('react-mixin', function() {
           };
 
           reactMixin.onClass(reactClass, mixin);
-          expect(reactClass.prototype.componentWillMount).to.exist;
+          expect(reactClass.prototype.UNSAFE_componentWillMount).to.exist;
 
-          new reactClass().componentWillMount();
+          new reactClass().UNSAFE_componentWillMount();
 
           expect(reactClass.prototype.setState.calledOnce).to.be.true
           expect(reactClass.prototype.getInitialState).not.to.exist;
         });
 
-        it('calls getInitialState before original componentWillMount which have access to state', function() {
+        it('calls getInitialState before original UNSAFE_componentWillMount which have access to state', function() {
           var mixin = {
             getInitialState: function() {
               return {
                 counter: 22
               }
             },
-            componentWillMount: function() {
+            UNSAFE_componentWillMount: function() {
               this.state.counter = this.state.counter + 1;
             }
           };
@@ -303,7 +304,7 @@ describe('react-mixin', function() {
           reactMixin.onClass(reactClass, mixin);
 
           var obj = new reactClass();
-          obj.componentWillMount();
+          obj.UNSAFE_componentWillMount();
 
           expect(obj.state.counter).to.be.eql(23);
         });
@@ -380,35 +381,35 @@ describe('react-mixin', function() {
     it('when chaining mixins, run in order listed', function() {
       var counter = 0;
       var deepestMixin = {
-        componentWillMount: function() {
+        UNSAFE_componentWillMount: function() {
           this.deepest = counter++;
         }
       };
       var deepMixin2 = {
         mixins: [deepestMixin],
-        componentWillMount: function() {
+        UNSAFE_componentWillMount: function() {
           this.deep2 = counter++;
         }
       };
       var deepMixin = {
-        componentWillMount: function() {
+        UNSAFE_componentWillMount: function() {
           this.deep1 = counter++;
         }
       };
       var shallowMixin = {
         mixins: [deepMixin, deepMixin2],
-        componentWillMount: function() {
+        UNSAFE_componentWillMount: function() {
           this.shallow = counter++;
         }
       };
       var reactClass = function Component() {};
-      reactClass.prototype.componentWillMount = function() {
+      reactClass.prototype.UNSAFE_componentWillMount = function() {
         this.spec = counter++;
       };
 
       reactMixin.onClass(reactClass, shallowMixin);
       var obj = new reactClass();
-      obj.componentWillMount();
+      obj.UNSAFE_componentWillMount();
 
       expect(obj.deep1).to.equal(0);
       expect(obj.deepest).to.equal(1);
